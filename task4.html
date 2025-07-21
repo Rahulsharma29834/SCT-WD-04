@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>To-Do Web App</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 50px 20px;
+    }
+
+    .container {
+      background: #1e1e2f;
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+    }
+
+    input, button, textarea {
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 5px;
+      font-size: 16px;
+    }
+
+    input, textarea {
+      background: #2d2d44;
+      color: white;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .task {
+      background: #2d2d44;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 10px;
+      position: relative;
+    }
+
+    .task.completed {
+      text-decoration: line-through;
+      color: #aaa;
+    }
+
+    .task-info {
+      margin-bottom: 10px;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .actions button {
+      background: #555;
+      padding: 5px 10px;
+      font-size: 14px;
+      border-radius: 5px;
+    }
+
+    .actions button:hover {
+      background: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📝 To-Do List</h2>
+
+    <div class="input-group">
+      <label>Task</label>
+      <input type="text" id="taskInput" placeholder="Enter task title">
+    </div>
+
+    <div class="input-group">
+      <label>Description</label>
+      <textarea id="descInput" rows="2" placeholder="Enter task details"></textarea>
+    </div>
+
+    <div class="input-group">
+      <label>Date & Time</label>
+      <input type="datetime-local" id="dateInput">
+    </div>
+
+    <button onclick="addTask()">Add Task</button>
+
+    <div id="taskList"></div>
+  </div>
+
+  <script>
+    let tasks = [];
+
+    function renderTasks() {
+      const taskList = document.getElementById("taskList");
+      taskList.innerHTML = "";
+
+      tasks.forEach((task, index) => {
+        const taskItem = document.createElement("div");
+        taskItem.className = "task" + (task.completed ? " completed" : "");
+
+        taskItem.innerHTML = `
+          <div class="task-info">
+            <strong>${task.title}</strong><br>
+            <small>${task.description}</small><br>
+            <em>${task.dateTime}</em>
+          </div>
+          <div class="actions">
+            <button onclick="toggleComplete(${index})">${task.completed ? 'Undo' : 'Complete'}</button>
+            <button onclick="editTask(${index})">Edit</button>
+            <button onclick="deleteTask(${index})">Delete</button>
+          </div>
+        `;
+
+        taskList.appendChild(taskItem);
+      });
+    }
+
+    function addTask() {
+      const title = document.getElementById("taskInput").value.trim();
+      const description = document.getElementById("descInput").value.trim();
+      const dateTime = document.getElementById("dateInput").value;
+
+      if (!title || !dateTime) {
+        alert("Please fill in both task and date/time.");
+        return;
+      }
+
+      tasks.push({ title, description, dateTime, completed: false });
+      renderTasks();
+
+      document.getElementById("taskInput").value = "";
+      document.getElementById("descInput").value = "";
+      document.getElementById("dateInput").value = "";
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+
+    function toggleComplete(index) {
+      tasks[index].completed = !tasks[index].completed;
+      renderTasks();
+    }
+
+    function editTask(index) {
+      const task = tasks[index];
+      const newTitle = prompt("Edit task title:", task.title);
+      const newDesc = prompt("Edit description:", task.description);
+      const newDate = prompt("Edit date & time:", task.dateTime);
+
+      if (newTitle && newDate) {
+        tasks[index].title = newTitle;
+        tasks[index].description = newDesc || "";
+        tasks[index].dateTime = newDate;
+        renderTasks();
+      }
+    }
+  </script>
+</body>
+</html>
